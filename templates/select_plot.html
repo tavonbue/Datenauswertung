@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Plot Auswahl</title> <!-- Seitentitel im Tab bleibt erhalten -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/skeleton/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/skeleton/skeleton.css') }}">
+    <style>
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-top: 40px;
+        }
+
+        /* Dropdown Styling */
+        .dropdowns {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .dropdown-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-right: 20px;
+        }
+
+        .dropdown-container:last-child {
+            margin-right: 0;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Plot anzeigen -->
+        <img src="data:image/png;base64,{{ plot_url }}" alt="Plot">
+
+        <!-- Dropdowns für die Ordner-, X- und Y-Achsen-Auswahl -->
+        <div class="dropdowns">
+            <form action="{{ url_for('select_plot') }}" method="get" style="display: flex; justify-content: center;">
+                <!-- Ordnerauswahl -->
+                <div class="dropdown-container">
+                    <label for="folderSelect">Ordner:</label>
+                    <select id="folderSelect" name="folder" onchange="this.form.submit()">
+                        <!-- Option für jeden Ordner -->
+                        {% for folder in folders %}
+                        <option value="{{ folder }}" {% if folder == selected_folder %}selected{% endif %}>{{ folder }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- X-Achse Auswahl -->
+                <div class="dropdown-container">
+                    <label for="xSelect">X-Achse:</label>
+                    <select id="xSelect" name="x_col" onchange="this.form.submit()">
+                        <!-- Option für jede Spalte als X-Achse -->
+                        {% for col in columns %}
+                        <option value="{{ col }}" {% if col == x_col %}selected{% endif %}>{{ col }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Y-Achse Auswahl -->
+                <div class="dropdown-container">
+                    <label for="ySelect">Y-Achse:</label>
+                    <select id="ySelect" name="y_col" onchange="this.form.submit()">
+                        <!-- Option für jede Spalte als Y-Achse -->
+                        {% for col in columns %}
+                        <option value="{{ col }}" {% if col == y_col %}selected{% endif %}>{{ col }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>
