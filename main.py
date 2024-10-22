@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from functions import plot_data
+from plotting import plot_data
 from import_data import load_data, load_file_paths
 
 # Initialisiere die Flask-App
