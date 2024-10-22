@@ -24,6 +24,3 @@ df = df_raw[df_raw.apply(lambda row: row.map(is_numeric).all(), axis=1)]
 # Erste Zeilen der bereinigten Datei anzeigen
 print(df.head())
 
-# Plotten der ersten Spalte
-df.w_01.plot()
-
