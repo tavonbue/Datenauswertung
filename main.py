@@ -1,4 +1,8 @@
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
 
 # Pfad zur Datei
 file_path = (r"T:\ta\60 FuE\6033 CC GH+IB\603330 Projekte\02 Forschung\1123118-00 HILTI_holzbau_schubversuche\04 "
@@ -24,3 +28,8 @@ df = df_raw[df_raw.apply(lambda row: row.map(is_numeric).all(), axis=1)]
 # Erste Zeilen der bereinigten Datei anzeigen
 print(df.head())
 
+df.iloc[:, 0].plot()
+
+df.clip(lower=0).plot(x='w_01', y='Q_sup', grid=True, title='Kraft-Verformung')
+df[['u_01', 'u_02', 'u_03', 'u_04', 'u_10', 'u_11', 'u_12', 'u_13']].clip(lower=0).plot(grid=True, title='Versuchsauswertung')
+df[['w_01', 'w_02', 'w_03', 'w_04', 'w_sup', 'w_inf']].clip(lower=0).plot(grid=True, title='Versuchsauswertung')
