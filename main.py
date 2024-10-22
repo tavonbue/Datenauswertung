@@ -35,7 +35,8 @@ def select_plot():
     plot_url = plot_data(df, units, x_col, y_col)
 
     # HTML-Template rendern mit den Ordnern, X- und Y-Spalten und dem Plot
-    return render_template('select_plot.html', folders=folders, selected_folder=selected_folder, x_col=x_col, y_col=y_col, plot_url=plot_url, columns=df.keys())
+    return render_template('select_plot.html', folders=folders, selected_folder=selected_folder,
+                           x_col=x_col, y_col=y_col, plot_url=plot_url, columns=df.keys())
 
 # Flask starten
 if __name__ == '__main__':
