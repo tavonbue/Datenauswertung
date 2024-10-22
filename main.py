@@ -1,31 +1,42 @@
-import pandas as pd
-from functions import is_numeric, plot_function
+from flask import Flask, render_template, request
+from functions import plot_data
+from import_data import load_data, load_file_paths
 
-# Pfad zur Datei
-file_path = '../02_ST01_01/hilti_timbertesting_ST01_01_messdaten.xlsx'
+# Initialisiere die Flask-App
+app = Flask(__name__)
 
-# Excel-Datei einlesen, erste Zeile überspringen, erste Spalte als Index festlegen und leere Zeilen entfernen
-df_raw = pd.read_excel(file_path, skiprows=1, index_col=0).dropna(how='all', axis=0)
+# Pfad zu den Dateien und Ordnern
+file_paths, folders = load_file_paths()
 
-# Die map-Methode auf jede Spalte anwenden und nur Zeilen behalten, die numerische Werte enthalten
-df = df_raw[df_raw.apply(lambda row: row.map(is_numeric).all(), axis=1)]
+# Alle Excel-Dateien im Voraus einlesen und in einem Dictionary speichern
+datasets = {}
+units_data = {}
 
-# Einheiten auslesen
-cleaned_units = df_raw.iloc[0, :].str.strip()
+for file_path, folder in zip(file_paths, folders):
+    df, units = load_data(file_path)
+    datasets[folder] = df
+    units_data[folder] = units
 
-# Anpassungen am Datensatz
-df.loc[:, 'w_delta'] = -df['w_sup']+df['w_inf']
-df.loc[:, 'u_m'] = 0.5*(df['w_03']+df['w_04'])
-df.loc[:, 'Q_sup'] = df['KMD_2MN'].abs()
-df.loc[:, 'Q_oel'] = df['oeldruck_P8AP'].abs()/10*36570/1000
-df.loc[:, 'psi_rel_N'] = (0.5*(df['u_10']+df['u_11'])-0.5*(df['u_12']+df['u_13']))/630
-df.loc[:, 'psi_rel_S'] = (0.5*(df['u_14']+df['u_15'])-0.5*(df['u_16']+df['u_17']))/630
-print(df)
+# Hauptseite für Ordner-, X- und Y-Achsen-Auswahl
+@app.route('/', methods=['GET', 'POST'])
+def select_plot():
+    # Ordnerauswahl: Standardmäßig wird der erste Ordner ausgewählt
+    selected_folder = request.args.get('folder', folders[0])
 
-# Liste der Verformungsspalten
-w_cols = ['w_01', 'w_02', 'w_03', 'w_04', 'w_sup', 'w_inf']
-u_cols = ['u_01', 'u_02', 'u_03', 'u_04', 'u_10', 'u_11', 'u_12', 'u_13', 'u_14', 'u_15', 'u_16', 'u_17']
-print(plot_function(df, w_cols, df['Q_sup'], 'Kraft-Verformungs-Diagramm', 'Verformung [mm]', 'Kraft [kN]'))
-print(plot_function(df, u_cols, df['Q_sup'], 'Kraft-Verformungs-Diagramm', 'Verformung [mm]', 'Kraft [kN]'))
-print(plot_function(df, ['w_delta'], df['Q_sup'], 'Kraft-Verformungs-Diagramm', 'Verformung [mm]', 'Kraft [kN]'))
-print(plot_function(df, [ 'w_03', 'w_04', 'u_m'], df['Q_sup'], 'Kraft-Verformungs-Diagramm', 'Verformung [mm]', 'Kraft [kN]'))
+    # DataFrame und Units aus dem vorgeladenen Dictionary abrufen
+    df = datasets[selected_folder]
+    units = units_data[selected_folder]
+
+    # X- und Y-Achsen Auswahl: Standardmäßig die ersten beiden Spalten
+    x_col = request.args.get('x_col', df.keys()[0])
+    y_col = request.args.get('y_col', df.keys()[1])
+
+    # Plot für die ausgewählten X- und Y-Achsen erstellen
+    plot_url = plot_data(df, units, x_col, y_col)
+
+    # HTML-Template rendern mit den Ordnern, X- und Y-Spalten und dem Plot
+    return render_template('select_plot.html', folders=folders, selected_folder=selected_folder, x_col=x_col, y_col=y_col, plot_url=plot_url, columns=df.keys())
+
+# Flask starten
+if __name__ == '__main__':
+    app.run(debug=True)
