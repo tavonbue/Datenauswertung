@@ -19,6 +19,7 @@ df = df_raw[df_raw.apply(lambda row: row.map(is_numeric).all(), axis=1)]
 print(df.head())
 
 
+
 # Plots
 df.clip(lower=0).plot(x='w_01', y='Q_sup', grid=True, title='Kraft-Verformung')
 df[['u_01', 'u_02', 'u_03', 'u_04', 'u_10', 'u_11', 'u_12', 'u_13']].clip(lower=0).plot(grid=True, title='Versuchsauswertung')
