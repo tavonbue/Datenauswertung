@@ -1,5 +1,3 @@
-
-
 def load_file_paths():
     import os
 
