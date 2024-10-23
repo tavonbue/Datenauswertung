@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Plot Auswahl</title> <!-- Seitentitel im Tab bleibt erhalten -->
+    <title>Plot Auswahl</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='lib/skeleton/normalize.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='lib/skeleton/skeleton.css') }}">
     <style>
@@ -41,16 +41,16 @@
         <!-- Plot anzeigen -->
         <img src="data:image/png;base64,{{ plot_url }}" alt="Plot">
 
-        <!-- Dropdowns für die Ordner-, X- und Y-Achsen-Auswahl -->
+        <!-- Dropdowns für die Excel-Datei-, X- und Y-Achsen-Auswahl -->
         <div class="dropdowns">
             <form action="{{ url_for('select_plot') }}" method="get" style="display: flex; justify-content: center;">
-                <!-- Ordnerauswahl -->
+                <!-- Excel-Datei-Auswahl -->
                 <div class="dropdown-container">
-                    <label for="folderSelect">Ordner:</label>
-                    <select id="folderSelect" name="folder" onchange="this.form.submit()">
-                        <!-- Option für jeden Ordner -->
-                        {% for folder in folders %}
-                        <option value="{{ folder }}" {% if folder == selected_folder %}selected{% endif %}>{{ folder }}</option>
+                    <label for="fileSelect">Excel-Datei:</label>
+                    <select id="fileSelect" name="file" onchange="this.form.submit()">
+                        <!-- Option für jede Excel-Datei -->
+                        {% for file in files %}
+                        <option value="{{ file }}" {% if file == selected_file %}selected{% endif %}>{{ file }}</option>
                         {% endfor %}
                     </select>
                 </div>
