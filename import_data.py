@@ -13,6 +13,7 @@ def load_file_paths():
 
     # Durch jeden Ordner gehen und den Pfad zur Excel-Datei generieren
     excel_file_paths = []
+    excel_file_names = []
 
     for folder in folders:
         folder_path = os.path.join(parent_directory, folder)
@@ -22,8 +23,9 @@ def load_file_paths():
             if file.endswith('.xlsx') or file.endswith('.XLSX'):
                 file_path = os.path.join(folder_path, file)
                 excel_file_paths.append(file_path)
+                excel_file_names.append(file)
 
-    return excel_file_paths, folders
+    return excel_file_paths, excel_file_names, folders
 
 def load_data(file_path):
     import pandas as pd
