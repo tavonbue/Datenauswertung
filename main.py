@@ -6,26 +6,27 @@ from import_data import load_data, load_file_paths
 app = Flask(__name__)
 
 # Pfad zu den Dateien und Ordnern
-file_paths, folders = load_file_paths()
+excel_file_paths, excel_file_names, folders = load_file_paths()
 
 # Alle Excel-Dateien im Voraus einlesen und in einem Dictionary speichern
 datasets = {}
 units_data = {}
 
-for file_path, folder in zip(file_paths, folders):
+# Verknüpfe Dateinamen mit den Dateipfaden und speichere die Datensätze
+for file_path, file_name in zip(excel_file_paths, excel_file_names):
     df, units = load_data(file_path)
-    datasets[folder] = df
-    units_data[folder] = units
+    datasets[file_name] = df
+    units_data[file_name] = units
 
-# Hauptseite für Ordner-, X- und Y-Achsen-Auswahl
+# Hauptseite für die Excel-Datei-, X- und Y-Achsen-Auswahl
 @app.route('/', methods=['GET', 'POST'])
 def select_plot():
-    # Ordnerauswahl: Standardmäßig wird der erste Ordner ausgewählt
-    selected_folder = request.args.get('folder', folders[0])
+    # Excel-Datei-Auswahl: Standardmäßig wird die erste Datei ausgewählt
+    selected_file = request.args.get('file', excel_file_names[0])
 
     # DataFrame und Units aus dem vorgeladenen Dictionary abrufen
-    df = datasets[selected_folder]
-    units = units_data[selected_folder]
+    df = datasets[selected_file]
+    units = units_data[selected_file]
 
     # X- und Y-Achsen Auswahl: Standardmäßig die ersten beiden Spalten
     x_col = request.args.get('x_col', df.keys()[0])
@@ -34,8 +35,8 @@ def select_plot():
     # Plot für die ausgewählten X- und Y-Achsen erstellen
     plot_url = plot_data(df, units, x_col, y_col)
 
-    # HTML-Template rendern mit den Ordnern, X- und Y-Spalten und dem Plot
-    return render_template('select_plot.html', folders=folders, selected_folder=selected_folder,
+    # HTML-Template rendern mit den Excel-Dateien, X- und Y-Spalten und dem Plot
+    return render_template('select_plot.html', files=excel_file_names, selected_file=selected_file,
                            x_col=x_col, y_col=y_col, plot_url=plot_url, columns=df.keys())
 
 # Flask starten
