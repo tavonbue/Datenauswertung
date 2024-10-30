@@ -12,72 +12,146 @@
             margin-top: 40px;
         }
 
-        /* Dropdown Styling */
-        .dropdowns {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .dropdown-container {
+        .form-container {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            margin-right: 20px;
+            gap: 2px;
+            margin-top: 5px;
         }
 
-        .dropdown-container:last-child {
-            margin-right: 0;
+        .axis-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        select {
-            padding: 10px;
+        .dropdown-container, .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        select, input {
+            padding: 8px;
             font-size: 16px;
+        }
+
+        .file-select-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .plot-container {
+            display: flex;
+            justify-content: center;  /* Zentriert das Bild horizontal */
+            margin-top: 20px;         /* Abstand oberhalb des Plots */
+        }
+
+        .button-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            text-transform: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Plot anzeigen -->
-        <img src="data:image/png;base64,{{ plot_url }}" alt="Plot">
+        <!-- Plot anzeigen, zentriert im Browser -->
+        <div class="plot-container">
+            <img src="data:image/png;base64,{{ plot_url }}" alt="Plot">
+        </div>
 
-        <!-- Dropdowns für die Excel-Datei-, X- und Y-Achsen-Auswahl -->
-        <div class="dropdowns">
-            <form action="{{ url_for('select_plot') }}" method="get" style="display: flex; justify-content: center;">
-                <!-- Excel-Datei-Auswahl -->
-                <div class="dropdown-container">
+        <!-- Formular mit gruppierten Dropdowns und Eingabefeldern für Update Plot -->
+        <form action="{{ url_for('select_plot') }}" method="get" class="form-container">
+
+            <!-- Auswahl für die Excel-Datei -->
+            <div style="display: flex; align-items: flex-end; gap: 10px; margin-top: 20px;">
+                <div style="display: flex; flex-direction: column;">
                     <label for="fileSelect">Excel-Datei:</label>
-                    <select id="fileSelect" name="file" onchange="this.form.submit()">
-                        <!-- Option für jede Excel-Datei -->
+                    <select id="fileSelect" name="file" onchange="this.form.submit()" style="height: 40px; padding: 0 10px; font-size: 16px;">
                         {% for file in files %}
                         <option value="{{ file }}" {% if file == selected_file %}selected{% endif %}>{{ file }}</option>
                         {% endfor %}
                     </select>
                 </div>
+            </div>
 
-                <!-- X-Achse Auswahl -->
+            <!-- X-Achsen Auswahl und Eingabefelder in einer Zeile -->
+            <div class="axis-group">
                 <div class="dropdown-container">
                     <label for="xSelect">X-Achse:</label>
                     <select id="xSelect" name="x_col" onchange="this.form.submit()">
-                        <!-- Option für jede Spalte als X-Achse -->
                         {% for col in columns %}
                         <option value="{{ col }}" {% if col == x_col %}selected{% endif %}>{{ col }}</option>
                         {% endfor %}
                     </select>
                 </div>
+                <div class="input-container">
+                    <label for="x_min">X min:</label>
+                    <input type="text" id="x_min" name="x_min" value="{{ x_min }}">
+                </div>
+                <div class="input-container">
+                    <label for="x_max">X max:</label>
+                    <input type="text" id="x_max" name="x_max" value="{{ x_max }}">
+                </div>
+                <div class="input-container">
+                    <label for="x_step">X Schrittweite:</label>
+                    <input type="text" id="x_step" name="x_step" value="{{ x_step }}">
+                </div>
+            </div>
 
-                <!-- Y-Achse Auswahl -->
+            <!-- Y-Achsen Auswahl und Eingabefelder in einer Zeile -->
+            <div class="axis-group">
                 <div class="dropdown-container">
                     <label for="ySelect">Y-Achse:</label>
                     <select id="ySelect" name="y_col" onchange="this.form.submit()">
-                        <!-- Option für jede Spalte als Y-Achse -->
                         {% for col in columns %}
                         <option value="{{ col }}" {% if col == y_col %}selected{% endif %}>{{ col }}</option>
                         {% endfor %}
                     </select>
                 </div>
-            </form>
-        </div>
+                <div class="input-container">
+                    <label for="y_min">Y min:</label>
+                    <input type="text" id="y_min" name="y_min" value="{{ y_min }}">
+                </div>
+                <div class="input-container">
+                    <label for="y_max">Y max:</label>
+                    <input type="text" id="y_max" name="y_max" value="{{ y_max }}">
+                </div>
+                <div class="input-container">
+                    <label for="y_step">Y Schrittweite:</label>
+                    <input type="text" id="y_step" name="y_step" value="{{ y_step }}">
+                </div>
+            </div>
+
+            <!-- Update Plot Button -->
+            <div class="button-container">
+                <button type="submit" style="height: 40px; padding: 0 16px;">Update Plot</button>
+            </div>
+        </form>
+
+        <!-- Separates Formular für PDF-Download-Button -->
+        <form action="{{ url_for('download_pdf') }}" method="post" style="text-align: center; margin-top: 6px;">
+            <input type="hidden" name="file" value="{{ selected_file }}">
+            <input type="hidden" name="x_col" value="{{ x_col }}">
+            <input type="hidden" name="y_col" value="{{ y_col }}">
+            <input type="hidden" name="x_min" value="{{ x_min }}">
+            <input type="hidden" name="x_max" value="{{ x_max }}">
+            <input type="hidden" name="y_min" value="{{ y_min }}">
+            <input type="hidden" name="y_max" value="{{ y_max }}">
+            <input type="hidden" name="x_step" value="{{ x_step }}">
+            <input type="hidden" name="y_step" value="{{ y_step }}">
+            <button type="submit" style="height: 40px; padding: 0 16px;">Download als PDF</button>
+        </form>
 
     </div>
 </body>
