@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Plot Auswahl</title>
+    <!-- Einbinden der CSS-Dateien für ein einheitliches und minimalistisches Layout -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/skeleton/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/skeleton/skeleton.css') }}">
+    <style>
+        /* Styling für die Navigationsleiste */
+        .navbar {
+            background-color: #333; /* Dunkler Hintergrund */
+            overflow: hidden;
+            display: flex;
+            justify-content: center; /* Zentrierte Anordnung */
+            padding: 10px;
+        }
+
+        .navbar a {
+            color: #f2f2f2; /* Helle Schriftfarbe */
+            padding: 14px 20px; /* Innenabstand */
+            text-align: center;
+            text-decoration: none; /* Kein Unterstrich */
+            font-size: 17px;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd; /* Hintergrundfarbe beim Hover */
+            color: black;
+        }
+
+        .navbar a.active {
+            text-decoration: underline; /* Unterstrich für aktive Seite */
+            color: #00b38f; /* Farbhighlight für aktive Seite */
+        }
+
+        /* Haupt-Container für die Seite */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 5px;
+            max-width: 800px; /* Maximale Breite des Containers */
+            width: 100%; /* Volle Breite */
+        }
+
+        /* Container für den Plot */
+        .plot-container {
+            display: flex;
+            justify-content: center; /* Plot zentriert */
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        /* Container für das Formular */
+        .form-container {
+            display: flex;
+            flex-direction: column; /* Elemente untereinander */
+            align-items: flex-start; /* Elemente links ausgerichtet */
+            gap: 10px; /* Abstand zwischen den Eingabefeldern */
+            margin-top: 5px;
+            width: 100%; /* Volle Breite */
+        }
+
+        /* Gruppe für die X- und Y-Achsen-Eingaben */
+        .axis-group {
+            display: flex;
+            align-items: center; /* Elemente vertikal zentriert */
+            gap: 10px; /* Abstand zwischen den Elementen */
+        }
+
+        /* Container für Dropdowns und Eingabefelder */
+        .dropdown-container, .input-container {
+            display: flex;
+            flex-direction: column; /* Elemente untereinander */
+            align-items: flex-start; /* Elemente links ausgerichtet */
+        }
+
+        /* Stil für Dropdowns und Eingabefelder */
+        select, input {
+            padding: 8px; /* Innenabstand */
+            font-size: 16px;
+        }
+
+        /* Container für die Dateiauswahl */
+        .file-select-container {
+            width: 100%;
+        }
+
+        /* Container für die Buttons */
+        .button-container {
+            display: flex;
+            align-items: center; /* Vertikal zentriert */
+            gap: 10px; /* Abstand zwischen den Buttons */
+            margin-top: 5px;
+        }
+
+        /* Stil für die Buttons */
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            text-transform: none; /* Keine Großbuchstaben */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigationsleiste -->
+    <div class="navbar">
+        <!-- Links zu Pre- und Post-Processing-Seiten -->
+        <a href="{{ url_for('preprocessing') }}" class="{% if request.endpoint == 'preprocessing' %}active{% endif %}">Pre-Processing</a>
+        <a href="{{ url_for('postprocessing') }}" class="{% if request.endpoint == 'postprocessing' %}active{% endif %}">Post-Processing</a>
+    </div>
+
+    <!-- Haupt-Container für den Inhalt -->
+    <div class="container">
+        <!-- Plot-Container: Zeigt das Bild des Plots an -->
+        <div class="plot-container">
+            <img src="data:image/png;base64,{{ plot_url }}" alt="Plot">
+        </div>
+
+        <!-- Formular für die Eingabefelder und Dropdowns -->
+        <form action="{{ url_for('postprocessing') }}" method="get" class="form-container">
+            <!-- Dropdown zur Auswahl der Excel-Datei -->
+            <div class="file-select-container">
+                <label for="fileSelect">Excel-Datei:</label>
+                <select id="fileSelect" name="file" onchange="this.form.submit()" style="height: 40px; padding: 0 10px; font-size: 16px;">
+                    {% for file in files %}
+                    <option value="{{ file }}" {% if file == selected_file %}selected{% endif %}>{{ file }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- X-Achsen Auswahl und Eingabefelder -->
+            <div class="axis-group">
+                <div class="dropdown-container">
+                    <label for="xSelect">X-Achse:</label>
+                    <select id="xSelect" name="x_col" onchange="this.form.submit()">
+                        {% for col in columns %}
+                        <option value="{{ col }}" {% if col == x_col %}selected{% endif %}>{{ col }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- Eingabefeld für X min -->
+                <div class="input-container">
+                    <label for="x_min">X min:</label>
+                    <input type="text" id="x_min" name="x_min" value="{{ x_min }}">
+                </div>
+                <!-- Eingabefeld für X max -->
+                <div class="input-container">
+                    <label for="x_max">X max:</label>
+                    <input type="text" id="x_max" name="x_max" value="{{ x_max }}">
+                </div>
+                <!-- Eingabefeld für X Schrittweite -->
+                <div class="input-container">
+                    <label for="x_step">X Schrittweite:</label>
+                    <input type="text" id="x_step" name="x_step" value="{{ x_step }}">
+                </div>
+            </div>
+
+            <!-- Y-Achsen Auswahl und Eingabefelder -->
+            <div class="axis-group">
+                <div class="dropdown-container">
+                    <label for="ySelect">Y-Achse:</label>
+                    <select id="ySelect" name="y_col" onchange="this.form.submit()">
+                        {% for col in columns %}
+                        <option value="{{ col }}" {% if col == y_col %}selected{% endif %}>{{ col }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- Eingabefeld für Y min -->
+                <div class="input-container">
+                    <label for="y_min">Y min:</label>
+                    <input type="text" id="y_min" name="y_min" value="{{ y_min }}">
+                </div>
+                <!-- Eingabefeld für Y max -->
+                <div class="input-container">
+                    <label for="y_max">Y max:</label>
+                    <input type="text" id="y_max" name="y_max" value="{{ y_max }}">
+                </div>
+                <!-- Eingabefeld für Y Schrittweite -->
+                <div class="input-container">
+                    <label for="y_step">Y Schrittweite:</label>
+                    <input type="text" id="y_step" name="y_step" value="{{ y_step }}">
+                </div>
+            </div>
+
+            <!-- Button zum Aktualisieren des Plots -->
+            <div class="button-container">
+                <button type="submit" style="height: 40px; padding: 0 16px;">Update Plot</button>
+            </div>
+        </form>
+
+        <!-- Formular für den PDF-Download -->
+        <form action="{{ url_for('download_pdf') }}" method="post" style="text-align: center; margin-top: 6px;">
+            <!-- Hidden-Inputs zur Übergabe der aktuellen Werte -->
+            <input type="hidden" name="file" value="{{ selected_file }}">
+            <input type="hidden" name="x_col" value="{{ x_col }}">
+            <input type="hidden" name="y_col" value="{{ y_col }}">
+            <input type="hidden" name="x_min" value="{{ x_min }}">
+            <input type="hidden" name="x_max" value="{{ x_max }}">
+            <input type="hidden" name="y_min" value="{{ y_min }}">
+            <input type="hidden" name="y_max" value="{{ y_max }}">
+            <input type="hidden" name="x_step" value="{{ x_step }}">
+            <input type="hidden" name="y_step" value="{{ y_step }}">
+            <!-- Button zum Herunterladen des Plots als PDF -->
+            <button type="submit" style="height: 40px; padding: 0 16px;">Download als PDF</button>
+        </form>
+    </div>
+</body>
+</html>
