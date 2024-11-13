@@ -223,6 +223,22 @@ def download_pdf():
     x_col3 = request.form.get('x_col3')
     y_col3 = request.form.get('y_col3')
 
+    # Eingaben für Achsengrenzen und Schrittweiten
+    x_min = request.form.get('x_min')
+    x_max = request.form.get('x_max')
+    y_min = request.form.get('y_min')
+    y_max = request.form.get('y_max')
+    x_step = request.form.get('x_step')
+    y_step = request.form.get('y_step')
+
+    # Konvertiere die Werte in floats, wenn sie vorhanden sind
+    x_min = float(x_min) if x_min else None
+    x_max = float(x_max) if x_max else None
+    y_min = float(y_min) if y_min else None
+    y_max = float(y_max) if y_max else None
+    x_step = float(x_step) if x_step else None
+    y_step = float(y_step) if y_step else None
+
     # Verarbeite den ersten Datensatz
     processed_file_path1 = os.path.join("Processed_data", f'processed_{selected_file1}.pkl')
     try:
@@ -251,11 +267,13 @@ def download_pdf():
     else:
         df3 = None
 
-    # Erstelle den Plot als PDF
+    # Erstelle den Plot als PDF mit Achsengrenzen und Schrittweiten
     pdf_bytes = plot_data_with_traces(
         df1, units, x_col1, y_col1,
         df2, x_col2, y_col2,
         df3, x_col3, y_col3,
+        x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max,
+        x_step=x_step, y_step=y_step,
         output_format='pdf'
     )
 
@@ -266,6 +284,13 @@ def download_pdf():
         selected_file3, y_col3
     )
 
+    # Erstelle den Pfad im "PDF_Export"-Ordner
+    pdf_path = os.path.join("PDF_Export", pdf_filename)
+
+    # Speichere das PDF im Ordner "PDF_Export"
+    with open(pdf_path, 'wb') as f:
+        f.write(pdf_bytes.getvalue())
+
     # Rückgabe des PDF-Inhalts direkt aus BytesIO, ohne es auf der Festplatte zu speichern
     return send_file(
         pdf_bytes,
@@ -275,22 +300,22 @@ def download_pdf():
     )
 
 
-# Funktion zur Generierung des Dateinamens für das PDF
-def generate_pdf_filename(selected_file1, x_col1, y_col1, selected_file2=None, y_col2=None, selected_file3=None,
-                          y_col3=None):
-    # Grundstruktur des Dateinamens
-    base_filename = f"{selected_file1.split('.')[0]}_{y_col1}_{x_col1}"
+# Funktion zur Generierung des kürzeren Dateinamens für das PDF
+def generate_pdf_filename(selected_file1, x_col1, y_col1, selected_file2=None, y_col2=None, selected_file3=None, y_col3=None):
+    # Erstelle eine kürzere Version des Dateinamens, indem nur die ersten 5 Zeichen der Dateinamen verwendet werden
+    base_filename = f"{selected_file1.split('.')[0][:5]}_{y_col1[:5]}_{x_col1[:5]}"
 
-    # Füge Spur 2 hinzu, falls vorhanden
+    # Füge Spur 2 hinzu, falls vorhanden, und kürze die Namen
     if selected_file2 and y_col2:
-        base_filename += f"_{selected_file2.split('.')[0]}_{y_col2}"
+        base_filename += f"_{selected_file2.split('.')[0][:5]}_{y_col2[:5]}"
 
-    # Füge Spur 3 hinzu, falls vorhanden
+    # Füge Spur 3 hinzu, falls vorhanden, und kürze die Namen
     if selected_file3 and y_col3:
-        base_filename += f"_{selected_file3.split('.')[0]}_{y_col3}"
+        base_filename += f"_{selected_file3.split('.')[0][:5]}_{y_col3[:5]}"
 
-    # Rückgabe des vollständigen Dateinamens
+    # Rückgabe des gekürzten Dateinamens
     return base_filename + ".pdf"
+
 
 
 if __name__ == '__main__':

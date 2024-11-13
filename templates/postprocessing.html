@@ -104,100 +104,124 @@
         </div>
 
         <!-- Tabelle für die Auswahl der Spuren -->
-       <form action="{{ url_for('postprocessing') }}" method="get">
-        <table>
-            <thead>
-                <tr>
-                    <th>Spur</th>
-                    <th>Excel-Datei</th>
-                    <th>X-Achse</th>
-                    <th>Y-Achse</th>
-                    <th>Ein-/Ausblenden</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Spur 1 -->
-                <tr>
-                    <td>Spur 1</td>
-                    <td>
-                        <select name="file1" onchange="this.form.submit()">
-                            {% for file in files %}
-                            <option value="{{ file }}" {% if file == selected_file1 %}selected{% endif %}>{{ file }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <select name="x_col1" onchange="this.form.submit()">
-                            {% for col in columns %}
-                            <option value="{{ col }}" {% if col == x_col1 %}selected{% endif %}>{{ col }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <select name="y_col1" onchange="this.form.submit()">
-                            {% for col in columns %}
-                            <option value="{{ col }}" {% if col == y_col1 %}selected{% endif %}>{{ col }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>–</td> <!-- Spur 1 ist immer sichtbar, daher kein Checkbox -->
-                </tr>
+        <form action="{{ url_for('postprocessing') }}" method="get">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Spur</th>
+                        <th>Excel-Datei</th>
+                        <th>X-Achse</th>
+                        <th>Y-Achse</th>
+                        <th>Ein-/Ausblenden</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Spur 1 -->
+                    <tr>
+                        <td>Spur 1</td>
+                        <td>
+                            <select name="file1" onchange="this.form.submit()">
+                                {% for file in files %}
+                                <option value="{{ file }}" {% if file == selected_file1 %}selected{% endif %}>{{ file }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="x_col1" onchange="this.form.submit()">
+                                {% for col in columns %}
+                                <option value="{{ col }}" {% if col == x_col1 %}selected{% endif %}>{{ col }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="y_col1" onchange="this.form.submit()">
+                                {% for col in columns %}
+                                <option value="{{ col }}" {% if col == y_col1 %}selected{% endif %}>{{ col }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>–</td> <!-- Spur 1 ist immer sichtbar, daher kein Checkbox -->
+                    </tr>
 
-                <!-- Spur 2 -->
-                <tr>
-                    <td>Spur 2</td>
-                    <td>
-                        <select name="file2" onchange="this.form.submit()">
-                            {% for file in files %}
-                            <option value="{{ file }}" {% if file == selected_file2 %}selected{% endif %}>{{ file }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <select name="x_col2" onchange="this.form.submit()">
-                            {% for col in columns %}
-                            <option value="{{ col }}" {% if col == x_col2 %}selected{% endif %}>{{ col }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <select name="y_col2" onchange="this.form.submit()">
-                            {% for col in columns %}
-                            <option value="{{ col }}" {% if col == y_col2 %}selected{% endif %}>{{ col }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td><input type="checkbox" name="show_curve2" {% if show_curve2 %}checked{% endif %}></td>
-                </tr>
+                    <!-- Spur 2 -->
+                    <tr>
+                        <td>Spur 2</td>
+                        <td>
+                            <select name="file2" onchange="this.form.submit()">
+                                {% for file in files %}
+                                <option value="{{ file }}" {% if file == selected_file2 %}selected{% endif %}>{{ file }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="x_col2" onchange="this.form.submit()">
+                                {% for col in columns %}
+                                <option value="{{ col }}" {% if col == x_col2 %}selected{% endif %}>{{ col }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="y_col2" onchange="this.form.submit()">
+                                {% for col in columns %}
+                                <option value="{{ col }}" {% if col == y_col2 %}selected{% endif %}>{{ col }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="checkbox" name="show_curve2" {% if show_curve2 %}checked{% endif %}></td>
+                    </tr>
 
-                <!-- Spur 3 -->
-                <tr>
-                    <td>Spur 3</td>
-                    <td>
-                        <select name="file3" onchange="this.form.submit()">
-                            {% for file in files %}
-                            <option value="{{ file }}" {% if file == selected_file3 %}selected{% endif %}>{{ file }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <select name="x_col3" onchange="this.form.submit()">
-                            {% for col in columns %}
-                            <option value="{{ col }}" {% if col == x_col3 %}selected{% endif %}>{{ col }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td>
-                        <select name="y_col3" onchange="this.form.submit()">
-                            {% for col in columns %}
-                            <option value="{{ col }}" {% if col == y_col3 %}selected{% endif %}>{{ col }}</option>
-                            {% endfor %}
-                        </select>
-                    </td>
-                    <td><input type="checkbox" name="show_curve3" {% if show_curve3 %}checked{% endif %}></td>
-                </tr>
-            </tbody>
-        </table>
+                    <!-- Spur 3 -->
+                    <tr>
+                        <td>Spur 3</td>
+                        <td>
+                            <select name="file3" onchange="this.form.submit()">
+                                {% for file in files %}
+                                <option value="{{ file }}" {% if file == selected_file3 %}selected{% endif %}>{{ file }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="x_col3" onchange="this.form.submit()">
+                                {% for col in columns %}
+                                <option value="{{ col }}" {% if col == x_col3 %}selected{% endif %}>{{ col }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="y_col3" onchange="this.form.submit()">
+                                {% for col in columns %}
+                                <option value="{{ col }}" {% if col == y_col3 %}selected{% endif %}>{{ col }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="checkbox" name="show_curve3" {% if show_curve3 %}checked{% endif %}></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Tabelle für die Eingaben von Achsengrenzen und Schrittweiten -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>X min</th>
+                        <th>X max</th>
+                        <th>X Schrittweite</th>
+                        <th>Y min</th>
+                        <th>Y max</th>
+                        <th>Y Schrittweite</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" name="x_min" value="{{ x_min }}" class="centered-input"></td>
+                        <td><input type="text" name="x_max" value="{{ x_max }}" class="centered-input"></td>
+                        <td><input type="text" name="x_step" value="{{ x_step }}" class="centered-input"></td>
+                        <td><input type="text" name="y_min" value="{{ y_min }}" class="centered-input"></td>
+                        <td><input type="text" name="y_max" value="{{ y_max }}" class="centered-input"></td>
+                        <td><input type="text" name="y_step" value="{{ y_step }}" class="centered-input"></td>
+                    </tr>
+                </tbody>
+            </table>
 
             <div class="button-container">
                 <button type="submit">Update Plot</button>
