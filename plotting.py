@@ -210,33 +210,6 @@ def plot_data_with_subplots(df1, units1, x_col1, y_col1, df2, units2, x_col2, y_
         plt.close()
         return plot_url
 
-def test_func():
-    import matplotlib.pyplot as plt
-    from matplotlib.ticker import MultipleLocator, AutoMinorLocator
-
-    #df1=df
-    #df2=df
-    # units1=units
-    # units2=units
-    x_col1='w_m_N'
-    x_col2='w_m_S'
-    y_col1='Q_sup'
-    y_col2='Q_sup'
-    x_min1=0
-    x_min2=0
-    x_max1=35
-    x_max2=35
-    y_min1=0
-    y_min2=0
-    y_max1=1800
-    y_max2=1800
-    x_step1=5
-    x_step2=5
-    y_step1=200
-    y_step2=200
-    return y_min1
-
-
 def plot_data_with_traces(df1, units, x_col1, y_col1, df2, x_col2, y_col2, df3, x_col3, y_col3,
                           x_min=None, x_max=None, y_min=None, y_max=None,
                           x_step=None, y_step=None, output_format='png'):
@@ -290,8 +263,8 @@ def plot_data_with_traces(df1, units, x_col1, y_col1, df2, x_col2, y_col2, df3, 
     ax.yaxis.set_minor_locator(AutoMinorLocator(2))
 
     # Legende unterhalb des Plots
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), frameon=False, ncol=3)
-    fig.tight_layout()
+    ax.legend(loc='upper right', bbox_to_anchor=(0.6, -0.032), frameon=False, ncol=3)
+    # fig.tight_layout()
 
     # Ausgabe je nach Format
     img = BytesIO()
