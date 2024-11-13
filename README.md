@@ -65,4 +65,4 @@ Ordner2/
 Die Web-App erkennt diese Struktur und lädt die Excel-Dateien entsprechend. Du kannst dann auswählen, welche Spalten geplottet werden sollen.
 
 Kontakt
-Bei Fragen oder Feedback wende dich bitte an [deine E-Mail-Adresse].
+Bei Fragen oder Feedback wende dich bitte an Christian Spathelf.

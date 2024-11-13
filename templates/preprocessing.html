@@ -3,121 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <title>Pre-Processing Plot</title>
-    <!-- Einbinden der CSS-Dateien für eine vereinheitlichte und einfache Stilgestaltung -->
     <link rel="stylesheet" href="{{ url_for('static', filename='lib/skeleton/normalize.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='lib/skeleton/skeleton.css') }}">
     <style>
-        /* Navigation-Leiste */
+        /* Stile für die Navigation, Container, Buttons und Formulare */
         .navbar {
-            background-color: #333; /* Dunkler Hintergrund */
+            background-color: #333;
             overflow: hidden;
             display: flex;
             justify-content: center;
             padding: 10px;
         }
         .navbar a {
-            color: #f2f2f2; /* Helle Schriftfarbe */
-            padding: 14px 20px; /* Innenabstand */
+            color: #f2f2f2;
+            padding: 14px 20px;
             text-align: center;
             text-decoration: none;
             font-size: 17px;
         }
         .navbar a:hover {
-            background-color: #ddd; /* Hintergrundfarbe beim Hover */
+            background-color: #ddd;
             color: black;
         }
         .navbar a.active {
-            text-decoration: underline; /* Unterstrichene Schrift für aktive Seite */
-            color: #00b38f; /* Farbhighlight für die aktive Seite */
+            text-decoration: underline;
+            color: #00b38f;
         }
-
-        /* Haupt-Container für die gesamte Seite */
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-top: 5px;
-            max-width: 800px; /* Maximale Breite */
-            width: 100%; /* Volle Breite */
+            max-width: 800px;
+            width: 100%;
         }
-
-        /* Container für den Plotly-Plot */
         .plot-container {
             display: flex;
-            justify-content: center; /* Plot zentriert */
+            justify-content: center;
             width: 100%;
             margin-top: 5px;
         }
-
-        /* Container für das Formular */
         .form-container {
             display: flex;
-            flex-direction: column; /* Elemente untereinander */
-            align-items: flex-start; /* Elemente links ausgerichtet */
-            gap: 10px; /* Abstand zwischen den Elementen */
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
             margin-top: 5px;
-            width: 100%; /* Volle Breite */
+            width: 100%;
         }
-
-        /* Gruppe von Eingabefeldern und Dropdowns */
         .axis-group {
             display: flex;
-            align-items: center; /* Elemente vertikal zentriert */
-            gap: 10px; /* Abstand zwischen den Eingabefeldern */
+            align-items: center;
+            gap: 10px;
         }
-
-        /* Container für Dropdown- und Eingabefelder */
         .dropdown-container, .input-container {
             display: flex;
-            flex-direction: column; /* Elemente untereinander */
-            align-items: flex-start; /* Elemente links ausgerichtet */
+            flex-direction: column;
+            align-items: flex-start;
         }
-
-        /* Stil für die Dropdowns und Eingabefelder */
         select, input {
-            padding: 8px; /* Innenabstand */
+            padding: 8px;
             font-size: 16px;
         }
-
-        /* Container für die Dateiauswahl */
         .file-select-container {
             width: 100%;
         }
-
-        /* Container für die Buttons */
         .button-container {
             display: flex;
-            align-items: center; /* Elemente vertikal zentriert */
+            align-items: center;
             gap: 10px;
             margin-top: 5px;
         }
-
-        /* Stil für die Buttons */
         button {
             padding: 8px 16px;
             font-size: 16px;
-            text-transform: none; /* Keine Großbuchstaben */
+            text-transform: none;
         }
     </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-    <!-- Navigation-Leiste -->
     <div class="navbar">
-        <!-- Links zur Pre-Processing- und Post-Processing-Seite -->
         <a href="{{ url_for('preprocessing') }}" class="{% if request.endpoint == 'preprocessing' %}active{% endif %}">Pre-Processing</a>
-        <a href="{{ url_for('postprocessing') }}" class="{% if request.endpoint == 'postprocessing' %}active{% endif %}">Post-Processing</a>
+        <a href="{{ url_for('postprocessing') }}" class="{% if request.endpoint == 'postprocessing' %}active{% endif %}">Single Plot</a>
+        <a href="{{ url_for('subplots') }}" class="{% if request.endpoint == 'subplots' %}active{% endif %}">Subplots</a>
     </div>
 
-    <!-- Haupt-Container für die Inhalte -->
     <div class="container">
-        <!-- Container für den Plotly-Plot -->
         <div class="plot-container">
-            <div id="plotly-plot">{{ plot_html|safe }}</div> <!-- Plotly-Plot wird hier eingefügt -->
+            <div id="plotly-plot">{{ plot_html|safe }}</div>
         </div>
 
-        <!-- Formular für die Eingabefelder und die Auswahl -->
         <form action="{{ url_for('preprocessing') }}" method="get" class="form-container">
-            <!-- Dropdown zur Auswahl der Excel-Datei -->
             <div class="file-select-container">
                 <label for="fileSelect">Excel-Datei:</label>
                 <select id="fileSelect" name="file" onchange="this.form.submit()" style="height: 40px; padding: 0 10px; font-size: 16px;">
@@ -127,7 +104,6 @@
                 </select>
             </div>
 
-            <!-- Dropdown zur Auswahl der Y-Achse -->
             <div class="axis-group">
                 <div class="dropdown-container">
                     <label for="ySelect">Auswahl Y-Achse:</label>
@@ -137,20 +113,14 @@
                         {% endfor %}
                     </select>
                 </div>
-                <!-- Eingabefeld zur Begrenzung der X-Achse -->
                 <div class="input-container">
                     <label for="x_max">X-Achse begrenzen bis [s]:</label>
                     <input type="text" id="x_max" name="x_max" value="{{ x_max }}">
                 </div>
             </div>
 
-            <!-- Button zum Aktualisieren des Plots -->
             <div class="button-container">
                 <button type="submit" style="height: 40px; padding: 0 16px;">Update Plot</button>
-            </div>
-
-            <!-- Button zum Zurücksetzen der X-Achse -->
-            <div class="button-container">
                 <button type="submit" name="reset_x_axis" value="true" style="height: 40px; padding: 0 16px;">Reset x-Achse</button>
             </div>
         </form>

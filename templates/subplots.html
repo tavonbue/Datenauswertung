@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Subplots</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/skeleton/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/skeleton/skeleton.css') }}">
+    <style>
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .navbar a {
+            color: #f2f2f2;
+            padding: 14px 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .navbar a.active {
+            text-decoration: underline;
+            color: #00b38f;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 5px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .plot-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .plot {
+            flex: 1;
+            max-width: 48%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        select, input {
+            width: 90%;
+            padding: 6px;
+            font-size: 14px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 0px;
+        }
+
+        button {
+            padding: 0px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('preprocessing') }}" class="{% if request.endpoint == 'preprocessing' %}active{% endif %}">Pre-Processing</a>
+        <a href="{{ url_for('postprocessing') }}" class="{% if request.endpoint == 'postprocessing' %}active{% endif %}">Single Plot</a>
+        <a href="{{ url_for('subplots') }}" class="{% if request.endpoint == 'subplots' %}active{% endif %}">Subplots</a>
+    </div>
+
+    <div class="container">
+        <!-- Container für die beiden Plots -->
+        <div class="plot-container">
+            <img src="data:image/png;base64,{{ plot_html1 }}" alt="Plot 1">
+            <img src="data:image/png;base64,{{ plot_html2 }}" alt="Plot 2">
+        </div>
+
+        <!-- Formular für die Eingaben und Auswahl für beide Plots -->
+        <form action="{{ url_for('subplots') }}" method="get">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Excel-Datei</th>
+                        <th>X-Achse</th>
+                        <th>Y-Achse</th>
+                        <th>X min</th>
+                        <th>X max</th>
+                        <th>X Schrittweite</th>
+                        <th>Y min</th>
+                        <th>Y max</th>
+                        <th>Y Schrittweite</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Plot 1</td>
+                        <td>
+                            <select name="file1" onchange="this.form.submit()">
+                                {% for file in files %}
+                                <option value="{{ file }}" {% if file == selected_file1 %}selected{% endif %}>{{ file }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="x_col1" onchange="this.form.submit()">
+                                {% for col in columns1 %}
+                                <option value="{{ col }}" {% if col == x_col1 %}selected{% endif %}>{{ col }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="y_col1" onchange="this.form.submit()">
+                                {% for col in columns1 %}
+                                <option value="{{ col }}" {% if col == y_col1 %}selected{% endif %}>{{ col }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="text" name="x_min1" value="{{ x_min1 }}"></td>
+                        <td><input type="text" name="x_max1" value="{{ x_max1 }}"></td>
+                        <td><input type="text" name="x_step1" value="{{ x_step1 }}"></td>
+                        <td><input type="text" name="y_min1" value="{{ y_min1 }}"></td>
+                        <td><input type="text" name="y_max1" value="{{ y_max1 }}"></td>
+                        <td><input type="text" name="y_step1" value="{{ y_step1 }}"></td>
+                    </tr>
+                    <tr>
+                        <td>Plot 2</td>
+                        <td>
+                            <select name="file2" onchange="this.form.submit()">
+                                {% for file in files %}
+                                <option value="{{ file }}" {% if file == selected_file2 %}selected{% endif %}>{{ file }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="x_col2" onchange="this.form.submit()">
+                                {% for col in columns2 %}
+                                <option value="{{ col }}" {% if col == x_col2 %}selected{% endif %}>{{ col }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="y_col2" onchange="this.form.submit()">
+                                {% for col in columns2 %}
+                                <option value="{{ col }}" {% if col == y_col2 %}selected{% endif %}>{{ col }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="text" name="x_min2" value="{{ x_min2 }}"></td>
+                        <td><input type="text" name="x_max2" value="{{ x_max2 }}"></td>
+                        <td><input type="text" name="x_step2" value="{{ x_step2 }}"></td>
+                        <td><input type="text" name="y_min2" value="{{ y_min2 }}"></td>
+                        <td><input type="text" name="y_max2" value="{{ y_max2 }}"></td>
+                        <td><input type="text" name="y_step2" value="{{ y_step2 }}"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Container für die Buttons -->
+            <div class="button-container">
+                <button type="submit">Update Plots</button>
+            </div>
+        </form>
+
+        <!-- Separates Formular für den PDF-Download-Button -->
+        <form action="{{ url_for('download_pdf') }}" method="post" class="button-container">
+            <input type="hidden" name="is_subplot" value="true">
+            <input type="hidden" name="file1" value="{{ selected_file1 }}">
+            <input type="hidden" name="x_col1" value="{{ x_col1 }}">
+            <input type="hidden" name="y_col1" value="{{ y_col1 }}">
+            <input type="hidden" name="x_min1" value="{{ x_min1 }}">
+            <input type="hidden" name="x_max1" value="{{ x_max1 }}">
+            <input type="hidden" name="y_min1" value="{{ y_min1 }}">
+            <input type="hidden" name="y_max1" value="{{ y_max1 }}">
+            <input type="hidden" name="x_step1" value="{{ x_step1 }}">
+            <input type="hidden" name="y_step1" value="{{ y_step1 }}">
+            <input type="hidden" name="file2" value="{{ selected_file2 }}">
+            <input type="hidden" name="x_col2" value="{{ x_col2 }}">
+            <input type="hidden" name="y_col2" value="{{ y_col2 }}">
+            <input type="hidden" name="x_min2" value="{{ x_min2 }}">
+            <input type="hidden" name="x_max2" value="{{ x_max2 }}">
+            <input type="hidden" name="y_min2" value="{{ y_min2 }}">
+            <input type="hidden" name="y_max2" value="{{ y_max2 }}">
+            <input type="hidden" name="x_step2" value="{{ x_step2 }}">
+            <input type="hidden" name="y_step2" value="{{ y_step2 }}">
+            <button type="submit">Download als PDF</button>
+        </form>
+    </div>
+</body>
+</html>

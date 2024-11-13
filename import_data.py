@@ -29,6 +29,7 @@ def load_file_paths():
 
 def load_dataframe(file_path):
     import pandas as pd
+    from datenbearbeitung import data_processing
 
     # Excel-Datei einlesen, erste Zeile überspringen, erste Spalte als Index festlegen und leere Zeilen entfernen
     # df_raw = pd.read_excel(file_path, skiprows=1, index_col=0).dropna(how='all', axis=0)
@@ -40,18 +41,8 @@ def load_dataframe(file_path):
     # Einheiten auslesen
     units = df_raw.iloc[0, :].str.strip()
 
-    # Anpassungen am Datensatz (bestehende Spalten werden überschrieben)
-    df['w_delta'] = -df['w_sup'] + df['w_inf']
-    df['u_m'] = 0.5 * (df['w_03'] + df['w_04'])
-    df['Q_sup'] = df['KMD_2MN'].abs()
-    df['Q_oel'] = df['oeldruck_P8AP'].abs() / 10 * 36570 / 1000
-    df['psi_rel_N'] = (0.5 * (df['u_10'] + df['u_11']) - 0.5 * (df['u_12'] + df['u_13'])) / 630
-    df['psi_rel_S'] = (0.5 * (df['u_14'] + df['u_15']) - 0.5 * (df['u_16'] + df['u_17'])) / 630
-
-    # Hier können weitere Spalten (Berechnungen) ergänzt werden, es müssen jedoch auch immer dazugehörige Einheiten
-    # definiert werden.
-    df['w_m_N'] = df[['w_01', 'w_02']].mean(axis=1)
-    units['w_m_N'] = 'mm'
+    # Import der Benutzerdefinierten Daten und überschreiben der bisheren Datensätze
+    df, units = data_processing(df, units)
 
     return df, units
 
